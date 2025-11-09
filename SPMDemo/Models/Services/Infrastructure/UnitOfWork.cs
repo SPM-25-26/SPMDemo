@@ -1,4 +1,5 @@
 ﻿using SPMDemo.Data;
+using SPMDemo.Models.Services.Infrastructure.Repositories;
 
 namespace SPMDemo.Models.Services.Infrastructure
 {

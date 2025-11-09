@@ -1,4 +1,6 @@
-﻿namespace SPMDemo.Models.Services.Infrastructure
+﻿using SPMDemo.Models.Services.Infrastructure.Repositories;
+
+namespace SPMDemo.Models.Services.Infrastructure
 {
     public interface IUnitOfWork
     {

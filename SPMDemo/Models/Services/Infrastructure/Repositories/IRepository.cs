@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace SPMDemo.Models.Services.Infrastructure
+namespace SPMDemo.Models.Services.Infrastructure.Repositories
 {
     public interface IRepository<TEntity> where TEntity : class
     {

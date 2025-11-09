@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace SPMDemo.Models.Services.Infrastructure
+namespace SPMDemo.Models.Services.Infrastructure.Repositories
 {
     public class Repository<TEntity>(DbContext context) : IRepository<TEntity> where TEntity : class
     {
