@@ -1,49 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SPMDemo.Models.Dtos;
-using SPMDemo.Models.Entities;
-using SPMDemo.Models.Services.Infrastructure;
+using SPMDemo.Models.Exceptions;
+using SPMDemo.Models.Services.Application.PointOfInterests;
 
 namespace SPMDemo.Endpoints
 {
     internal static class PointOfInterestEndpoints
     {
-        public static async Task<IResult> GetList([FromServices] IUnitOfWork unitOfWork)
+        public static async Task<IResult> GetList([FromServices] IPointOfInterestService pointOfInterestService)
         {
-            IEnumerable<PointOfInterest> list = await unitOfWork.PointOfInterests.GetAllAsync();
-
-            IEnumerable<PointOfInterestDto> dtoList = list.Select(poi => new PointOfInterestDto
-            {
-                Id = poi.Id,
-                Name = poi.Name,
-                Description = poi.Description,
-                Latitude = poi.Latitude,
-                Longitude = poi.Longitude
-            });
-
-            return TypedResults.Ok(dtoList);
+            IEnumerable<PointOfInterestDto> poi = await pointOfInterestService.GetAllAsync();
+            return TypedResults.Ok(poi);
         }
 
         public static async Task<IResult> GetById(
-            [FromServices] IUnitOfWork unitOfWork,
+            [FromServices] IPointOfInterestService pointOfInterestService,
             int id)
         {
-            PointOfInterest point = await unitOfWork.PointOfInterests.GetAsync(id);
-
-            if (point == null)
+            try
+            {
+                PointOfInterestDto dto = await pointOfInterestService.GetByIdAsync(id);
+                return TypedResults.Ok(dto);
+            }
+            catch (NotFoundException)
             {
                 return TypedResults.NotFound();
             }
-
-            PointOfInterestDto dto = new()
-            {
-                Id = point.Id,
-                Name = point.Name,
-                Description = point.Description,
-                Latitude = point.Latitude,
-                Longitude = point.Longitude
-            };
-
-            return TypedResults.Ok(dto);
         }
     }
 }
