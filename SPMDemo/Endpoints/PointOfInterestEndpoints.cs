@@ -27,7 +27,7 @@ namespace SPMDemo.Endpoints
             [FromServices] IUnitOfWork unitOfWork,
             int id)
         {
-           PointOfInterest point = await unitOfWork.PointOfInterests.GetAsync(id);
+            PointOfInterest point = await unitOfWork.PointOfInterests.GetAsync(id);
 
             if (point == null)
             {

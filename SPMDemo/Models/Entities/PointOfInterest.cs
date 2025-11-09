@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata;
-
-namespace SPMDemo.Models.Entities
+﻿namespace SPMDemo.Models.Entities
 {
     public class PointOfInterest
     {
