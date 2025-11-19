@@ -6,11 +6,13 @@ namespace SPMDemo.Endpoints
     {
         public static IEndpointRouteBuilder MapPointOfInterest(this IEndpointRouteBuilder builder)
         {
-            RouteGroupBuilder groupBuilder = builder.MapGroup("/api/point-of-interests");
-                //.RequireAuthorization();
+            RouteGroupBuilder groupBuilder = builder
+                .MapGroup("/api/point-of-interests")
+                .RequireAuthorization();
 
             groupBuilder.MapGet("/", PointOfInterestEndpoints.GetList)
                 .Produces<IEnumerable<PointOfInterestDto>>(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status401Unauthorized)
                 .Produces(StatusCodes.Status500InternalServerError)
                 .WithOpenApi(op =>
                 {
@@ -20,6 +22,7 @@ namespace SPMDemo.Endpoints
 
             groupBuilder.MapGet("/{id}", PointOfInterestEndpoints.GetById)
                 .Produces<PointOfInterestDto>(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status401Unauthorized)
                 .Produces(StatusCodes.Status404NotFound)
                 .Produces(StatusCodes.Status500InternalServerError)
                 .WithOpenApi(op =>
