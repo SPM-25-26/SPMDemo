@@ -12,34 +12,44 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+// Retrieve and configure the database connection string
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+// Register the DbContext with SQL Server provider
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+// Developer exception page for EF migrations
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-var key = builder.Configuration["Jwt:Secret"] ?? throw new InvalidOperationException("JWT secret not configured");
+// Retrieve the JWT secret key from configuration
+var key = builder.Configuration["Jwt:Secret"]
+    ?? throw new InvalidOperationException("JWT secret not configured");
 
+// Configure JWT Bearer authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+            ValidateIssuer = false, // Not validating issuer for simplicity
+            ValidateAudience = false, // Not validating audience for simplicity
+            ValidateIssuerSigningKey = true, // Validate the signing key
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)) // Secret key
         };
     });
 
+// Enable authorization services
 builder.Services.AddAuthorization();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Register Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Configure Swagger to support JWT authentication
 builder.Services.AddSwaggerGen(options =>
 {
-    // Configura lo schema di sicurezza JWT Bearer
     options.AddSecurityDefinition("Bearer", new()
     {
         Name = "Authorization",
@@ -47,7 +57,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Inserisci il token JWT."
+        Description = "Enter your JWT token in the format: Bearer {your token}"
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -66,35 +76,39 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Serilog
-builder.Host.UseSerilog((webHostBuilderContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(webHostBuilderContext.Configuration));
+// Configure Serilog logging
+builder.Host.UseSerilog((context, config) =>
+    config.ReadFrom.Configuration(context.Configuration));
 
-// Register UnitOfWork
+// Register Unit of Work pattern
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-// Register services
+// Register application services
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IPointOfInterestService, PointOfInterestService>();
 
-// Options
+// Bind JWT configuration section to strongly-typed options
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure middleware pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// Enforce HTTPS
 app.UseHttpsRedirection();
 
+// Enable authentication and authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map endpoints
+// Map REST endpoints from extension methods
 app.MapAuth();
 app.MapPointOfInterest();
 
+// Start the application
 app.Run();
