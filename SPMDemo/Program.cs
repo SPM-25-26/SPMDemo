@@ -1,13 +1,10 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using SPMDemo.Data;
 using SPMDemo.Endpoints;
 using SPMDemo.Models.Options;
 using SPMDemo.Models.Services.Application.PointOfInterests;
 using SPMDemo.Models.Services.Infrastructure;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,7 +69,7 @@ builder.Host.UseSerilog((webHostBuilderContext, loggerConfiguration) => loggerCo
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Register services
-builder.Services.AddTransient<IAuthService, AuthService>();
+//builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IPointOfInterestService, PointOfInterestService>();
 
 // Options

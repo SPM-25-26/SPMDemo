@@ -7,7 +7,6 @@ namespace SPMDemo.Data
     {
         protected override void OnModelCreating(ModelBuilder builder)
         {
-
         }
 
         public DbSet<PointOfInterest> PointOfInterests { get; set; }

@@ -1,10 +1,15 @@
-﻿namespace SPMDemo.Models.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SPMDemo.Models.Entities
 {
     public class PointOfInterest
     {
         public int Id { get; set; }
         public required string Name { get; set; }
         public required string Description { get; set; }
+
+        [StringLength(50)]
+        public required string ShortDescription { get; set; }
         public required double Latitude { get; set; }
         public required double Longitude { get; set; }
 

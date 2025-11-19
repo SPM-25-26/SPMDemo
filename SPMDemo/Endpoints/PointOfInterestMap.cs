@@ -6,8 +6,7 @@ namespace SPMDemo.Endpoints
     {
         public static IEndpointRouteBuilder MapPointOfInterest(this IEndpointRouteBuilder builder)
         {
-            RouteGroupBuilder groupBuilder = builder
-                .MapGroup("/api/point-of-interest");
+            RouteGroupBuilder groupBuilder = builder.MapGroup("/api/point-of-interests");
                 //.RequireAuthorization();
 
             groupBuilder.MapGet("/", PointOfInterestEndpoints.GetList)

@@ -24,7 +24,7 @@ namespace SPMDemo.Endpoints
             }
             catch (NotFoundException)
             {
-                return TypedResults.NotFound();
+                return TypedResults.NotFound($"Point of interest with id {id} is not present in the db.");
             }
         }
     }
