@@ -12,7 +12,7 @@
                 .Produces(StatusCodes.Status500InternalServerError)
                 .WithOpenApi(op =>
                 {
-                    op.Summary = "Generazione del token JWT.";
+                    op.Summary = "Generazione del JWT.";
                     return op;
                 });
 
