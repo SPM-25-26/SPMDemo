@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Scalar.AspNetCore;
 using Serilog;
 using SPMDemo.Data;
 using SPMDemo.Endpoints;
@@ -19,6 +19,8 @@ string connectionString = builder.Configuration.GetConnectionString("DefaultConn
 // Register the DbContext with SQL Server provider
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddOpenApi();
 
 // Developer exception page for EF migrations
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -43,39 +45,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Enable authorization services
 builder.Services.AddAuthorization();
 
-// Register Swagger/OpenAPI
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-// Configure Swagger to support JWT authentication
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition("Bearer", new()
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Enter your JWT token in the format: Bearer {your token}"
-    });
-
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-});
-
 // Configure Serilog logging
 builder.Host.UseSerilog((context, config) =>
     config.ReadFrom.Configuration(context.Configuration));
@@ -95,8 +64,8 @@ var app = builder.Build();
 // Configure middleware pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 // Enforce HTTPS
